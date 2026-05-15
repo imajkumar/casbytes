@@ -13,9 +13,9 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS time_zone VARCHAR(64);
 
 UPDATE users
 SET
-    first_name = COALESCE(first_name, 'Platform'),
-    last_name = COALESCE(last_name, 'Administrator'),
-    display_name = COALESCE(display_name, 'Platform Administrator'),
+    first_name = COALESCE(first_name, 'Ajay'),
+    last_name = COALESCE(last_name, 'Kumar'),
+    display_name = COALESCE(display_name, 'Ajay Kumar'),
     gender = COALESCE(gender, 'UNSPECIFIED'),
     locale = COALESCE(locale, 'en'),
     time_zone = COALESCE(time_zone, 'UTC')

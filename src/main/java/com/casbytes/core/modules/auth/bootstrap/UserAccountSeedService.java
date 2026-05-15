@@ -38,9 +38,9 @@ public class UserAccountSeedService {
     admin.setEnabled(true);
     admin.setCreatedAt(now);
     admin.setUpdatedAt(now);
-    admin.setFirstName("Platform");
-    admin.setLastName("Administrator");
-    admin.setDisplayName("Platform Administrator");
+    admin.setFirstName("Ajay");
+    admin.setLastName("Kumar");
+    admin.setDisplayName("Ajay Kumar");
     admin.setGender("UNSPECIFIED");
     admin.setLocale("en");
     admin.setTimeZone("UTC");

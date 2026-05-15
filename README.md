@@ -60,6 +60,8 @@ export CASBYTES_DATASOURCE_PASSWORD='(set locally; do not commit)'
 
 ### Sample startup commands
 
+See **Major commands** for the full list. Common shortcuts:
+
 ```bash
 # Local development (PostgreSQL + Redis + Kafka must match application-dev overrides)
 ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
@@ -200,16 +202,97 @@ find . -type f \( -path './target/*' -o -path './.git/*' \) -prune -o -type f -p
 5. **Observability:** scrape Prometheus from `:8081/actuator/prometheus` via network policy–limited monitoring namespaces.
 6. **HPA:** CPU + memory + custom metrics (Kafka lag, HTTP latency) once baselines exist.
 
-## Build & tests
+## Major commands (quick reference)
+
+Run all commands from the **repository root** (`casbytes-core/`). On Windows, use `mvnw.cmd` instead of `./mvnw` where applicable.
+
+### Build & package
 
 ```bash
-./mvnw clean verify
+./mvnw clean compile              # compile only
+./mvnw clean package              # JAR in target/ (runs tests unless -DskipTests)
+./mvnw clean package -DskipTests    # package without tests
+./mvnw clean verify               # lifecycle through verify (tests + JaCoCo report)
 ```
 
-- **Unit tests (default):** `./mvnw test` — excludes the JUnit tag `integration`.
-- **Integration tests (Docker):** `./mvnw -Pintegration test` — runs `CasbytesContainersIT` (PostgreSQL via Testcontainers). Tests are skipped when Docker is unavailable (`@Testcontainers(disabledWithoutDocker = true)`).
+### Run the application (Flyway runs on startup)
 
-See `docs/OAUTH2_AND_CASBIN.md` for OAuth2 issuer/JWKS settings, Casbin JDBC/reload, and CI notes.
+Migrations apply automatically when Spring Boot starts against the configured datasource.
+
+```bash
+# Recommended local profile (YAML aligns with docker-compose host ports: Postgres 5433, Redis 6380, …)
+./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
+
+# No explicit profile (uses application.yml + application-default.yml when implicit default profile is active)
+./mvnw spring-boot:run
+
+# After ./mvnw package
+java -jar target/casbytes-core-service-0.1.0-SNAPSHOT.jar --spring.profiles.active=dev
+```
+
+### Local infrastructure (Docker Compose)
+
+```bash
+# Core data stores only (typical for API dev)
+docker compose up -d postgres redis
+
+# Full stack (see docker-compose.yml comments for ports)
+docker compose up -d
+
+# Flyway only: applies SQL under src/main/resources/db/migration (uses compose env for DB)
+docker compose run --rm flyway
+```
+
+Export `CASBYTES_DATASOURCE_PASSWORD` if your compose file expects it (see `docker-compose.yml`).
+
+### Tests
+
+```bash
+./mvnw test                       # unit tests (JUnit tag "integration" excluded by default)
+./mvnw -Pintegration test         # includes Testcontainers ITs (Docker required)
+./mvnw test -Dtest=SomeTest       # single test class (optional)
+```
+
+Integration ITs: `com.casbytes.core.integration.security.CasbytesContainersIT` — skipped when Docker is unavailable (`@Testcontainers(disabledWithoutDocker = true)`).
+
+### Code quality & formatting
+
+```bash
+./mvnw spotless:check             # fail if Java formatting / imports drift
+./mvnw spotless:apply             # auto-fix formatting
+./mvnw -Pquality verify           # Checkstyle + PMD on verify (see pom); still run spotless:check in CI
+```
+
+With **`-Pquality`**, `verify` runs **Checkstyle** and **PMD**. Run **Spotless** in addition (`spotless:check`) in CI or pre-commit.
+
+**JaCoCo** (coverage): runs on every `./mvnw verify` — reports under `target/site/jacoco/` (`jacoco.xml` for Sonar).
+
+**SonarQube / SonarCloud** (server UI; requires host + token):
+
+```bash
+./mvnw verify sonar:sonar \
+  -Dsonar.host.url=https://your-sonar.example \
+  -Dsonar.login="$SONAR_TOKEN"
+```
+
+Project defaults live in `sonar-project.properties` (adjust `sonar.projectKey` for your org).
+
+More detail: `config/build/README`.
+
+### Git hooks (pre-commit: tests + Spotless)
+
+Hooks live in `scripts/git-hooks/`. Git does **not** use them until configured **once per clone**:
+
+```bash
+git config core.hooksPath scripts/git-hooks
+```
+
+Then `git commit` runs `./mvnw test` and `./mvnw spotless:check`. Emergency bypass: `SKIP_PRE_COMMIT=1 git commit ...`  
+IntelliJ: enable **Run Git hooks** in commit settings. See `scripts/git-hooks/README`.
+
+### Docs (security & Casbin)
+
+See `docs/OAUTH2_AND_CASBIN.md` for OAuth2 issuer/JWKS, Casbin JDBC/reload, and CI notes.
 
 ## License
 

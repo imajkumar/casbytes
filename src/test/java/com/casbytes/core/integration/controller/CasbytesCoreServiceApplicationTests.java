@@ -66,9 +66,9 @@ class CasbytesCoreServiceApplicationTests {
         .andExpect(jsonPath("$.data.expires_in").exists())
         .andExpect(jsonPath("$.data.user.email").value("admin@casbytes.com"))
         .andExpect(jsonPath("$.data.user.role").value("PLATFORM_OWNER"))
-        .andExpect(jsonPath("$.data.user.first_name").value("Platform"))
-        .andExpect(jsonPath("$.data.user.last_name").value("Administrator"))
-        .andExpect(jsonPath("$.data.user.display_name").value("Platform Administrator"))
+        .andExpect(jsonPath("$.data.user.first_name").value("Ajay"))
+        .andExpect(jsonPath("$.data.user.last_name").value("Kumar"))
+        .andExpect(jsonPath("$.data.user.display_name").value("Ajay Kumar"))
         .andExpect(jsonPath("$.data.user.gender").value("UNSPECIFIED"));
   }
 
