@@ -1,0 +1,4 @@
+p, role:admin, *, *
+p, role:user, /api/v1/reference/items, GET
+g, alice, role:admin
+g, bob, role:user

@@ -1,0 +1,31 @@
+# Profile used by Testcontainers-backed integration tests (see CasbytesContainersIT).
+spring:
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+      - org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration
+      - org.springframework.boot.elasticsearch.autoconfigure.ElasticsearchClientAutoConfiguration
+      - org.springframework.boot.elasticsearch.autoconfigure.ElasticsearchRestClientAutoConfiguration
+      - org.springframework.boot.elasticsearch.autoconfigure.health.ElasticsearchRestHealthContributorAutoConfiguration
+      - org.springframework.boot.data.elasticsearch.autoconfigure.DataElasticsearchAutoConfiguration
+      - org.springframework.boot.data.elasticsearch.autoconfigure.DataElasticsearchReactiveRepositoriesAutoConfiguration
+      - org.springframework.boot.data.elasticsearch.autoconfigure.DataElasticsearchRepositoriesAutoConfiguration
+      - org.springframework.boot.data.elasticsearch.autoconfigure.health.DataElasticsearchReactiveHealthContributorAutoConfiguration
+
+casbytes:
+  jwt:
+    secret: integration-casbytes-jwt-signing-key-minimum-48-characters-for-tests-01
+  auth:
+    bootstrap-admin-enabled: false
+  security:
+    permit-api-without-auth: true
+  health:
+    kafka:
+      enabled: false
+  casbin:
+    policy-store: jdbc
+
+logging:
+  level:
+    root: WARN
+    com.casbytes.core: INFO

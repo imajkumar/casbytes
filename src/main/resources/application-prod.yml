@@ -1,0 +1,37 @@
+spring:
+  jpa:
+    show-sql: false
+
+logging:
+  level:
+    root: WARN
+    com.casbytes.core: INFO
+
+casbytes:
+  security:
+    permit-api-without-auth: false
+    oauth2:
+      enabled: true
+      issuer-uri: ${CASBYTES_OAUTH2_ISSUER_URI:}
+      jwk-set-uri: ${CASBYTES_OAUTH2_JWK_SET_URI:}
+      audiences:
+        - ${CASBYTES_OAUTH2_AUDIENCE:casbytes-core}
+      map-realm-roles: ${CASBYTES_OAUTH2_MAP_REALM_ROLES:false}
+  health:
+    kafka:
+      enabled: true
+
+management:
+  endpoint:
+    health:
+      show-details: never
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false

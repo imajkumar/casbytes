@@ -1,0 +1,146 @@
+# Host ports avoid clashes with typical local installs:
+# - PostgreSQL 5432, Redis 6379, Zookeeper 2181, Kafka 9092, Elasticsearch 9200, Kibana 5601
+# Override: CASBYTES_COMPOSE_POSTGRES_PORT, CASBYTES_COMPOSE_REDIS_PORT,
+#           CASBYTES_COMPOSE_ZOOKEEPER_PORT, CASBYTES_COMPOSE_KAFKA_HOST_PORT,
+#           CASBYTES_COMPOSE_KAFKA_UI_PORT, CASBYTES_COMPOSE_ELASTICSEARCH_PORT,
+#           CASBYTES_COMPOSE_KIBANA_PORT
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: casbytes-core-postgres
+    environment:
+      POSTGRES_DB: casbytes_core_db
+      POSTGRES_USER: ayra
+      POSTGRES_PASSWORD: ${CASBYTES_DATASOURCE_PASSWORD:?set CASBYTES_DATASOURCE_PASSWORD in your shell or a compose env file (do not commit secrets)}
+    ports:
+      - "${CASBYTES_COMPOSE_POSTGRES_PORT:-5433}:5432"
+    volumes:
+      - casbytes_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ayra -d casbytes_core_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: casbytes-core-redis
+    ports:
+      - "${CASBYTES_COMPOSE_REDIS_PORT:-6380}:6379"
+    command: ["redis-server", "--appendonly", "yes"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.6.1
+    container_name: casbytes-core-zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "${CASBYTES_COMPOSE_ZOOKEEPER_PORT:-2182}:2181"
+    volumes:
+      - casbytes_zk_data:/var/lib/zookeeper/data
+    healthcheck:
+      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/127.0.0.1/2181"]
+      interval: 10s
+      timeout: 5s
+      retries: 8
+      start_period: 30s
+
+  kafka:
+    image: confluentinc/cp-kafka:7.6.1
+    container_name: casbytes-core-kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "${CASBYTES_COMPOSE_KAFKA_HOST_PORT:-9094}:9094"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:${CASBYTES_COMPOSE_KAFKA_HOST_PORT:-9094}
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:29092,PLAINTEXT_HOST://0.0.0.0:9094
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+    volumes:
+      - casbytes_kafka_data:/var/lib/kafka/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "kafka-broker-api-versions --bootstrap-server localhost:9094 >/dev/null 2>&1 || exit 1",
+        ]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
+
+  kafka-ui:
+    image: ghcr.io/kafbat/kafka-ui:latest
+    container_name: casbytes-core-kafka-ui
+    depends_on:
+      - kafka
+    ports:
+      - "${CASBYTES_COMPOSE_KAFKA_UI_PORT:-8099}:8080"
+    environment:
+      DYNAMIC_CONFIG_ENABLED: "true"
+      KAFKA_CLUSTERS_0_NAME: casbytes-local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
+      KAFKA_CLUSTERS_0_PROPERTIES_SECURITY_PROTOCOL: PLAINTEXT
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:8080/ || curl -fsS http://127.0.0.1:8080/ >/dev/null"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.3
+    container_name: casbytes-core-elasticsearch
+    environment:
+      - node.name=casbytes-es
+      - cluster.name=casbytes-local
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "${CASBYTES_COMPOSE_ELASTICSEARCH_PORT:-9201}:9200"
+    volumes:
+      - casbytes_es_data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:9200/_cluster/health >/dev/null"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.15.3
+    container_name: casbytes-core-kibana
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - xpack.security.enabled=false
+    ports:
+      - "${CASBYTES_COMPOSE_KIBANA_PORT:-5602}:5601"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:5601/api/status >/dev/null"]
+      interval: 20s
+      timeout: 10s
+      retries: 12
+      start_period: 120s
+
+volumes:
+  casbytes_pg_data: {}
+  casbytes_zk_data: {}
+  casbytes_kafka_data: {}
+  casbytes_es_data: {}
