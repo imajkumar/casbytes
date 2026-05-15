@@ -6,6 +6,7 @@ import com.casbytes.core.modules.auth.domain.UserAccount;
 import com.casbytes.core.modules.auth.domain.UserAccountRepository;
 import com.casbytes.core.modules.auth.dto.LoginRequest;
 import com.casbytes.core.modules.auth.dto.LoginResponse;
+import com.casbytes.core.modules.auth.dto.LoginUserDto;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -44,7 +45,8 @@ public class AuthLoginService {
 
     Optional<UserAccount> account = authenticatedUser(email, request.getPassword());
     if (account.isPresent()) {
-      return issueAccessToken(email, List.of(account.get().getRole().name()));
+      UserAccount u = account.get();
+      return issueAccessToken(u.getEmail(), List.of(u.getRole().name()), toLoginUserDto(u));
     }
 
     if (authProperties.isBootstrapAdminEnabled()
@@ -53,7 +55,7 @@ public class AuthLoginService {
         && email.equalsIgnoreCase(authProperties.getAdminEmail().trim())
         && passwordEncoder.matches(
             request.getPassword(), authProperties.getAdminPasswordEncoded())) {
-      return issueAccessToken(email, List.of(JWT_ROLE_PLATFORM_OWNER));
+      return issueAccessToken(email, List.of(JWT_ROLE_PLATFORM_OWNER), bootstrapLoginUser(email));
     }
 
     throw new BadCredentialsException("Invalid credentials");
@@ -66,7 +68,31 @@ public class AuthLoginService {
         .filter(u -> passwordEncoder.matches(rawPassword, u.getPasswordHash()));
   }
 
-  private LoginResponse issueAccessToken(String subjectEmail, List<String> roles) {
+  private static LoginUserDto toLoginUserDto(UserAccount u) {
+    return LoginUserDto.builder()
+        .id(u.getId())
+        .email(u.getEmail())
+        .role(u.getRole().name())
+        .firstName(u.getFirstName())
+        .lastName(u.getLastName())
+        .displayName(u.getDisplayName())
+        .gender(u.getGender())
+        .phone(u.getPhone())
+        .mobile(u.getMobile())
+        .jobTitle(u.getJobTitle())
+        .department(u.getDepartment())
+        .locale(u.getLocale())
+        .timeZone(u.getTimeZone())
+        .build();
+  }
+
+  /** Minimal profile when only YAML bootstrap credentials match (no DB row). */
+  private static LoginUserDto bootstrapLoginUser(String email) {
+    return LoginUserDto.builder().email(email).role(JWT_ROLE_PLATFORM_OWNER).build();
+  }
+
+  private LoginResponse issueAccessToken(
+      String subjectEmail, List<String> roles, LoginUserDto user) {
     JwtEncoder encoder = jwtEncoder.getIfAvailable();
     if (encoder == null) {
       throw new ResponseStatusException(
@@ -93,6 +119,7 @@ public class AuthLoginService {
         .accessToken(token)
         .tokenType("Bearer")
         .expiresInSeconds(jwtProperties.getAccessTokenTtlSeconds())
+        .user(user)
         .build();
   }
 }

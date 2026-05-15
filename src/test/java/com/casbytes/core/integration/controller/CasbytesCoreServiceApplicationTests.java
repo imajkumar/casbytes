@@ -63,7 +63,13 @@ class CasbytesCoreServiceApplicationTests {
         .andExpect(jsonPath("$.success").value(true))
         .andExpect(jsonPath("$.data.access_token").isString())
         .andExpect(jsonPath("$.data.token_type").value("Bearer"))
-        .andExpect(jsonPath("$.data.expires_in").exists());
+        .andExpect(jsonPath("$.data.expires_in").exists())
+        .andExpect(jsonPath("$.data.user.email").value("admin@casbytes.com"))
+        .andExpect(jsonPath("$.data.user.role").value("PLATFORM_OWNER"))
+        .andExpect(jsonPath("$.data.user.first_name").value("Platform"))
+        .andExpect(jsonPath("$.data.user.last_name").value("Administrator"))
+        .andExpect(jsonPath("$.data.user.display_name").value("Platform Administrator"))
+        .andExpect(jsonPath("$.data.user.gender").value("UNSPECIFIED"));
   }
 
   @Test

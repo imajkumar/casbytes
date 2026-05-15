@@ -38,6 +38,12 @@ public class UserAccountSeedService {
     admin.setEnabled(true);
     admin.setCreatedAt(now);
     admin.setUpdatedAt(now);
+    admin.setFirstName("Platform");
+    admin.setLastName("Administrator");
+    admin.setDisplayName("Platform Administrator");
+    admin.setGender("UNSPECIFIED");
+    admin.setLocale("en");
+    admin.setTimeZone("UTC");
     userAccountRepository.save(admin);
   }
 }

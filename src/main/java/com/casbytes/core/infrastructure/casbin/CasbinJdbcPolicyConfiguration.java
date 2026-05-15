@@ -41,10 +41,12 @@ public class CasbinJdbcPolicyConfiguration {
         new JDBCAdapter(
             dataSource, false, properties.getJdbcTableName(), properties.isJdbcAutoCreateTable());
     Enforcer enforcer = new Enforcer(model, adapter);
-    log.info(
-        "Casbin enforcer initialized (store=jdbc, table={}, autoCreateTable={})",
-        properties.getJdbcTableName(),
-        properties.isJdbcAutoCreateTable());
+    if (log.isInfoEnabled()) {
+      log.info(
+          "Casbin enforcer initialized (store=jdbc, table={}, autoCreateTable={})",
+          properties.getJdbcTableName(),
+          properties.isJdbcAutoCreateTable());
+    }
     return enforcer;
   }
 }

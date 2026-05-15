@@ -13,6 +13,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
@@ -48,7 +49,7 @@ public class SecurityConfiguration {
                 PathPatternRequestMatcher.pathPattern("/swagger-ui/**"),
                 PathPatternRequestMatcher.pathPattern("/v3/api-docs"),
                 PathPatternRequestMatcher.pathPattern("/v3/api-docs/**")))
-        .csrf(csrf -> csrf.disable())
+        .csrf(AbstractHttpConfigurer::disable)
         .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
     return http.build();
@@ -61,7 +62,7 @@ public class SecurityConfiguration {
 
     JwtDecoder decoder = jwtDecoder.getIfAvailable();
 
-    http.csrf(csrf -> csrf.disable())
+    http.csrf(AbstractHttpConfigurer::disable)
         .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(
             auth -> {
@@ -81,8 +82,8 @@ public class SecurityConfiguration {
               auth.requestMatchers("/actuator/**").authenticated();
               auth.anyRequest().denyAll();
             })
-        .httpBasic(basic -> basic.disable())
-        .formLogin(form -> form.disable());
+        .httpBasic(AbstractHttpConfigurer::disable)
+        .formLogin(AbstractHttpConfigurer::disable);
 
     if (decoder != null) {
       http.oauth2ResourceServer(

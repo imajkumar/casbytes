@@ -8,6 +8,7 @@ import com.casbytes.core.shared.i18n.LocalizedApiResponseFactory;
 import com.casbytes.core.shared.util.RequestContextUtil;
 import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.Locale;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -41,7 +42,7 @@ public class CasbinAdminV1Controller {
                 "status",
                 "RELOADED",
                 "policyStore",
-                casbinProperties.getPolicyStore().name().toLowerCase()),
+                casbinProperties.getPolicyStore().name().toLowerCase(Locale.ROOT)),
             RequestContextUtil.correlationIdOrNew(),
             request.getRequestURI()));
   }

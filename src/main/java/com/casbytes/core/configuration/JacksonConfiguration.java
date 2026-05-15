@@ -10,6 +10,6 @@ public class JacksonConfiguration {
 
   @Bean
   public JsonMapperBuilderCustomizer casbytesJsonMapperCustomizer() {
-    return (JsonMapper.Builder builder) -> builder.findAndAddModules();
+    return JsonMapper.Builder::findAndAddModules;
   }
 }

@@ -17,23 +17,27 @@ public class AuditAspect {
     long start = System.nanoTime();
     try {
       Object result = joinPoint.proceed();
-      log.info(
-          "audit.success resource={} action={} method={} correlationId={} durationMs={}",
-          auditable.resource(),
-          auditable.action(),
-          joinPoint.getSignature().toShortString(),
-          RequestContextUtil.correlationIdOrNew(),
-          durationMillis(start));
+      if (log.isInfoEnabled()) {
+        log.info(
+            "audit.success resource={} action={} method={} correlationId={} durationMs={}",
+            auditable.resource(),
+            auditable.action(),
+            joinPoint.getSignature().toShortString(),
+            RequestContextUtil.correlationIdOrNew(),
+            durationMillis(start));
+      }
       return result;
     } catch (Exception ex) {
-      log.warn(
-          "audit.failure resource={} action={} method={} correlationId={} durationMs={} message={}",
-          auditable.resource(),
-          auditable.action(),
-          joinPoint.getSignature().toShortString(),
-          RequestContextUtil.correlationIdOrNew(),
-          durationMillis(start),
-          ex.getMessage());
+      if (log.isWarnEnabled()) {
+        log.warn(
+            "audit.failure resource={} action={} method={} correlationId={} durationMs={} message={}",
+            auditable.resource(),
+            auditable.action(),
+            joinPoint.getSignature().toShortString(),
+            RequestContextUtil.correlationIdOrNew(),
+            durationMillis(start),
+            ex.getMessage());
+      }
       throw ex;
     }
   }

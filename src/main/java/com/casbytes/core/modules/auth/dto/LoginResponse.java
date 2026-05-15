@@ -18,4 +18,7 @@ public class LoginResponse {
 
   @JsonProperty("expires_in")
   long expiresInSeconds;
+
+  /** Authenticated user snapshot (ERP-oriented profile; no secrets). */
+  LoginUserDto user;
 }

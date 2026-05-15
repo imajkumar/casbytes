@@ -31,6 +31,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
   CasbytesProperties.class,
   JwtProperties.class
 })
+@SuppressWarnings("PMD.UseUtilityClass") // Spring Boot entry point
 public class CasbytesCoreServiceApplication {
 
   public static void main(String[] args) {

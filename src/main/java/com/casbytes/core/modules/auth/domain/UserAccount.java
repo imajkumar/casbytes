@@ -39,4 +39,34 @@ public class UserAccount {
 
   @Column(name = "updated_at", nullable = false)
   private Instant updatedAt;
+
+  @Column(name = "first_name", length = 128)
+  private String firstName;
+
+  @Column(name = "last_name", length = 128)
+  private String lastName;
+
+  @Column(name = "display_name", length = 255)
+  private String displayName;
+
+  @Column(length = 32)
+  private String gender;
+
+  @Column(length = 64)
+  private String phone;
+
+  @Column(length = 64)
+  private String mobile;
+
+  @Column(name = "job_title", length = 128)
+  private String jobTitle;
+
+  @Column(length = 128)
+  private String department;
+
+  @Column(length = 32)
+  private String locale;
+
+  @Column(name = "time_zone", length = 64)
+  private String timeZone;
 }

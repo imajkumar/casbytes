@@ -6,6 +6,12 @@ Pre-commit runs:
   1) ./mvnw test          (unit tests; integration group excluded by default)
   2) ./mvnw spotless:check (Google Java Format + import cleanup)
 
+Optional full static analysis (slower; same as CI quality gate):
+
+  ./mvnw -Pquality verify
+
+See config/build/README for Checkstyle, PMD, JaCoCo, and SonarQube usage.
+
 Fix formatting before commit:
 
   ./mvnw spotless:apply

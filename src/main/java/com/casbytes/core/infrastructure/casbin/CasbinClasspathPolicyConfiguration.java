@@ -48,10 +48,12 @@ public class CasbinClasspathPolicyConfiguration {
     FileAdapter adapter =
         new FileAdapter(new ByteArrayInputStream(policyText.getBytes(StandardCharsets.UTF_8)));
     Enforcer enforcer = new Enforcer(model, adapter);
-    log.info(
-        "Casbin enforcer initialized (store=classpath, model={}, policy={})",
-        properties.getModelPath(),
-        properties.getPolicyPath());
+    if (log.isInfoEnabled()) {
+      log.info(
+          "Casbin enforcer initialized (store=classpath, model={}, policy={})",
+          properties.getModelPath(),
+          properties.getPolicyPath());
+    }
     return enforcer;
   }
 }
