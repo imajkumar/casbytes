@@ -19,11 +19,11 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @ConditionalOnMissingBean(JwtDecoder.class)
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    @Override
-    protected void doFilterInternal(
-            HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
-        // Future: extract Bearer token, validate signature/claims, populate SecurityContext
-        filterChain.doFilter(request, response);
-    }
+  @Override
+  protected void doFilterInternal(
+      HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+      throws ServletException, IOException {
+    // Future: extract Bearer token, validate signature/claims, populate SecurityContext
+    filterChain.doFilter(request, response);
+  }
 }

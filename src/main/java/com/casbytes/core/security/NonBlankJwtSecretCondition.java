@@ -10,8 +10,8 @@ import org.springframework.util.StringUtils;
  */
 public final class NonBlankJwtSecretCondition implements Condition {
 
-    @Override
-    public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-        return StringUtils.hasText(context.getEnvironment().getProperty("casbytes.jwt.secret"));
-    }
+  @Override
+  public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
+    return StringUtils.hasText(context.getEnvironment().getProperty("casbytes.jwt.secret"));
+  }
 }

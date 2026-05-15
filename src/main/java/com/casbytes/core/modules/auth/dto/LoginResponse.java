@@ -10,12 +10,12 @@ import lombok.extern.jackson.Jacksonized;
 @Jacksonized
 public class LoginResponse {
 
-    @JsonProperty("access_token")
-    String accessToken;
+  @JsonProperty("access_token")
+  String accessToken;
 
-    @JsonProperty("token_type")
-    String tokenType;
+  @JsonProperty("token_type")
+  String tokenType;
 
-    @JsonProperty("expires_in")
-    long expiresInSeconds;
+  @JsonProperty("expires_in")
+  long expiresInSeconds;
 }

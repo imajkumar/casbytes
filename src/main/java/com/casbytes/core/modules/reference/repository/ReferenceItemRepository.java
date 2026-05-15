@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ReferenceItemRepository extends JpaRepository<ReferenceItem, UUID> {
 
-    Optional<ReferenceItem> findByCodeIgnoreCase(String code);
+  Optional<ReferenceItem> findByCodeIgnoreCase(String code);
 
-    boolean existsByCodeIgnoreCase(String code);
+  boolean existsByCodeIgnoreCase(String code);
 }

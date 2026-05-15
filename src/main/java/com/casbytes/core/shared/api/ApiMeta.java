@@ -12,7 +12,7 @@ import lombok.extern.jackson.Jacksonized;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiMeta {
 
-    Instant timestamp;
-    String correlationId;
-    String path;
+  Instant timestamp;
+  String correlationId;
+  String path;
 }

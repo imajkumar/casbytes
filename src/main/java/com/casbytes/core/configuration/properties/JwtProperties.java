@@ -7,17 +7,17 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "casbytes.jwt")
 public class JwtProperties {
 
-    /**
-     * Symmetric signing key for HMAC JWTs (future Auth service integration may switch to JWKS).
-     */
-    private String secret = "";
+  /**
+   * Symmetric signing key for HMAC JWTs (future Auth service integration may switch to JWKS).
+   */
+  private String secret = "";
 
-    private String issuer = "casbytes-auth";
+  private String issuer = "casbytes-auth";
 
-    private String audience = "casbytes-core";
+  private String audience = "casbytes-core";
 
-    /**
-     * Access token TTL used by documentation and future token validation policies.
-     */
-    private long accessTokenTtlSeconds = 900;
+  /**
+   * Access token TTL used by documentation and future token validation policies.
+   */
+  private long accessTokenTtlSeconds = 900;
 }

@@ -11,10 +11,10 @@ import lombok.extern.jackson.Jacksonized;
 @Jacksonized
 public class ReferenceItemResponse {
 
-    UUID id;
-    String code;
-    String name;
-    boolean active;
-    Instant createdAt;
-    Instant updatedAt;
+  UUID id;
+  String code;
+  String name;
+  boolean active;
+  Instant createdAt;
+  Instant updatedAt;
 }

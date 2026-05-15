@@ -19,35 +19,36 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ReferenceItemService {
 
-    private final ReferenceItemRepository referenceItemRepository;
-    private final ReferenceItemMapper referenceItemMapper;
+  private final ReferenceItemRepository referenceItemRepository;
+  private final ReferenceItemMapper referenceItemMapper;
 
-    @Transactional(readOnly = true)
-    @Auditable(resource = "reference_item", action = AuditableAction.READ)
-    public List<ReferenceItemResponse> listActive() {
-        return referenceItemRepository.findAll().stream()
-                .filter(ReferenceItem::isActive)
-                .map(referenceItemMapper::toResponse)
-                .toList();
-    }
+  @Transactional(readOnly = true)
+  @Auditable(resource = "reference_item", action = AuditableAction.READ)
+  public List<ReferenceItemResponse> listActive() {
+    return referenceItemRepository.findAll().stream()
+        .filter(ReferenceItem::isActive)
+        .map(referenceItemMapper::toResponse)
+        .toList();
+  }
 
-    @Transactional(readOnly = true)
-    @Auditable(resource = "reference_item", action = AuditableAction.READ)
-    public ReferenceItemResponse getById(UUID id) {
-        ReferenceItem item = referenceItemRepository
-                .findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("ReferenceItem", id));
-        return referenceItemMapper.toResponse(item);
-    }
+  @Transactional(readOnly = true)
+  @Auditable(resource = "reference_item", action = AuditableAction.READ)
+  public ReferenceItemResponse getById(UUID id) {
+    ReferenceItem item =
+        referenceItemRepository
+            .findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("ReferenceItem", id));
+    return referenceItemMapper.toResponse(item);
+  }
 
-    @Transactional
-    @Auditable(resource = "reference_item", action = AuditableAction.CREATE)
-    public ReferenceItemResponse create(ReferenceItemCreateRequest request) {
-        if (referenceItemRepository.existsByCodeIgnoreCase(request.getCode())) {
-            throw new BusinessException("Reference item code already exists: " + request.getCode());
-        }
-        ReferenceItem entity = referenceItemMapper.toNewEntity(request);
-        ReferenceItem saved = referenceItemRepository.save(entity);
-        return referenceItemMapper.toResponse(saved);
+  @Transactional
+  @Auditable(resource = "reference_item", action = AuditableAction.CREATE)
+  public ReferenceItemResponse create(ReferenceItemCreateRequest request) {
+    if (referenceItemRepository.existsByCodeIgnoreCase(request.getCode())) {
+      throw new BusinessException("Reference item code already exists: " + request.getCode());
     }
+    ReferenceItem entity = referenceItemMapper.toNewEntity(request);
+    ReferenceItem saved = referenceItemRepository.save(entity);
+    return referenceItemMapper.toResponse(saved);
+  }
 }

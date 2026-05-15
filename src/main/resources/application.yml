@@ -2,6 +2,11 @@ spring:
   application:
     name: casbytes-core-service
 
+  messages:
+    basename: messages
+    encoding: UTF-8
+    fallback-to-system-locale: false
+
   threads:
     virtual:
       enabled: true
@@ -96,6 +101,9 @@ springdoc:
     tagsSorter: alpha
 
 casbytes:
+  info:
+    product-name: CasBytes Core ERP
+    tagline: Modular enterprise core — REST APIs, PostgreSQL/Flyway, security, Casbin, and platform integrations.
   security:
     permit-api-without-auth: false
     oauth2:

@@ -8,8 +8,8 @@ import tools.jackson.databind.json.JsonMapper;
 @Configuration
 public class JacksonConfiguration {
 
-    @Bean
-    public JsonMapperBuilderCustomizer casbytesJsonMapperCustomizer() {
-        return (JsonMapper.Builder builder) -> builder.findAndAddModules();
-    }
+  @Bean
+  public JsonMapperBuilderCustomizer casbytesJsonMapperCustomizer() {
+    return (JsonMapper.Builder builder) -> builder.findAndAddModules();
+  }
 }

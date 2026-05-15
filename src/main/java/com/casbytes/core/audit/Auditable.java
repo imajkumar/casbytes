@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Auditable {
 
-    String resource();
+  String resource();
 
-    AuditableAction action() default AuditableAction.EXECUTE;
+  AuditableAction action() default AuditableAction.EXECUTE;
 }

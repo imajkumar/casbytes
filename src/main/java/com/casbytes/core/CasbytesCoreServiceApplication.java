@@ -2,6 +2,7 @@ package com.casbytes.core;
 
 import com.casbytes.core.configuration.properties.AuthProperties;
 import com.casbytes.core.configuration.properties.CasbinProperties;
+import com.casbytes.core.configuration.properties.CasbytesInfoProperties;
 import com.casbytes.core.configuration.properties.CasbytesProperties;
 import com.casbytes.core.configuration.properties.JwtProperties;
 import org.springframework.boot.SpringApplication;
@@ -14,18 +15,25 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableAsync;
 
-@SpringBootApplication(exclude = {
-    UserDetailsServiceAutoConfiguration.class,
-    DataRedisRepositoriesAutoConfiguration.class
-})
+@SpringBootApplication(
+    exclude = {
+      UserDetailsServiceAutoConfiguration.class,
+      DataRedisRepositoriesAutoConfiguration.class
+    })
 @EntityScan(basePackages = "com.casbytes.core")
 @EnableAsync
 @EnableJpaAuditing
 @EnableJpaRepositories(basePackages = "com.casbytes.core")
-@EnableConfigurationProperties({AuthProperties.class, CasbytesProperties.class, JwtProperties.class, CasbinProperties.class})
+@EnableConfigurationProperties({
+  AuthProperties.class,
+  CasbinProperties.class,
+  CasbytesInfoProperties.class,
+  CasbytesProperties.class,
+  JwtProperties.class
+})
 public class CasbytesCoreServiceApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(CasbytesCoreServiceApplication.class, args);
-    }
+  public static void main(String[] args) {
+    SpringApplication.run(CasbytesCoreServiceApplication.class, args);
+  }
 }

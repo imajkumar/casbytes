@@ -12,9 +12,9 @@ import lombok.extern.jackson.Jacksonized;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiErrorBody {
 
-    String code;
-    String message;
-    List<ErrorDetail> details;
-    String traceId;
-    String path;
+  String code;
+  String message;
+  List<ErrorDetail> details;
+  String traceId;
+  String path;
 }

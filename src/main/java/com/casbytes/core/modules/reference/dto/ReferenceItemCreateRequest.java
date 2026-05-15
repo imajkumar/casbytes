@@ -11,11 +11,11 @@ import lombok.extern.jackson.Jacksonized;
 @Jacksonized
 public class ReferenceItemCreateRequest {
 
-    @NotBlank
-    @Size(max = 64)
-    String code;
+  @NotBlank
+  @Size(max = 64)
+  String code;
 
-    @NotBlank
-    @Size(max = 255)
-    String name;
+  @NotBlank
+  @Size(max = 255)
+  String name;
 }

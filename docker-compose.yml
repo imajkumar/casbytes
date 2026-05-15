@@ -4,6 +4,9 @@
 #           CASBYTES_COMPOSE_ZOOKEEPER_PORT, CASBYTES_COMPOSE_KAFKA_HOST_PORT,
 #           CASBYTES_COMPOSE_KAFKA_UI_PORT, CASBYTES_COMPOSE_ELASTICSEARCH_PORT,
 #           CASBYTES_COMPOSE_KIBANA_PORT
+#
+# Tables are created by Flyway. Either start the Spring app (dev profile) once, or run the full stack
+# so the `flyway` service applies classpath migrations to Postgres before you open pgAdmin.
 services:
   postgres:
     image: postgres:16-alpine
@@ -11,7 +14,8 @@ services:
     environment:
       POSTGRES_DB: casbytes_core_db
       POSTGRES_USER: ayra
-      POSTGRES_PASSWORD: ${CASBYTES_DATASOURCE_PASSWORD:?set CASBYTES_DATASOURCE_PASSWORD in your shell or a compose env file (do not commit secrets)}
+      # Default matches application-dev.yml; override with CASBYTES_DATASOURCE_PASSWORD. Compose needs $$ for a literal $.
+      POSTGRES_PASSWORD: ${CASBYTES_DATASOURCE_PASSWORD:-System$$Admin}
     ports:
       - "${CASBYTES_COMPOSE_POSTGRES_PORT:-5433}:5432"
     volumes:
@@ -21,6 +25,26 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+
+  # Applies SQL in src/main/resources/db/migration so tables exist even if the Spring app was never started.
+  flyway:
+    image: flyway/flyway:10.22-alpine
+    container_name: casbytes-core-flyway
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      FLYWAY_URL: jdbc:postgresql://postgres:5432/casbytes_core_db
+      FLYWAY_USER: ayra
+      FLYWAY_PASSWORD: ${CASBYTES_DATASOURCE_PASSWORD:-System$$Admin}
+      FLYWAY_LOCATIONS: filesystem:/flyway/sql
+      FLYWAY_SCHEMAS: public
+      FLYWAY_BASELINE_ON_MIGRATE: "true"
+      FLYWAY_CONNECT_RETRIES: "30"
+    volumes:
+      - ./src/main/resources/db/migration:/flyway/sql
+    command: migrate
+    restart: "no"
 
   redis:
     image: redis:7-alpine

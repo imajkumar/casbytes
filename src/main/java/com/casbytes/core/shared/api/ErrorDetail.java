@@ -11,7 +11,7 @@ import lombok.extern.jackson.Jacksonized;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ErrorDetail {
 
-    String field;
-    String message;
-    String rejectedValue;
+  String field;
+  String message;
+  String rejectedValue;
 }

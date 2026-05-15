@@ -11,14 +11,14 @@ import org.springframework.stereotype.Service;
 @ConditionalOnBean(RedisConnectionFactory.class)
 public class RedisHealthService {
 
-    private final RedisConnectionFactory redisConnectionFactory;
+  private final RedisConnectionFactory redisConnectionFactory;
 
-    public HealthStatusDto check() {
-        try (var connection = redisConnectionFactory.getConnection()) {
-            String pong = connection.ping();
-            return HealthStatusDto.builder().status("UP").detail("PING -> " + pong).build();
-        } catch (Exception ex) {
-            return HealthStatusDto.builder().status("DOWN").detail(ex.getMessage()).build();
-        }
+  public HealthStatusDto check() {
+    try (var connection = redisConnectionFactory.getConnection()) {
+      String pong = connection.ping();
+      return HealthStatusDto.builder().status("UP").detail("PING -> " + pong).build();
+    } catch (Exception ex) {
+      return HealthStatusDto.builder().status("DOWN").detail(ex.getMessage()).build();
     }
+  }
 }

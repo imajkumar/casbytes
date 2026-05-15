@@ -11,10 +11,10 @@ import lombok.extern.jackson.Jacksonized;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class HealthStatusDto {
 
-    /**
-     * UP, DOWN, DEGRADED, SKIPPED, UNKNOWN
-     */
-    String status;
+  /**
+   * UP, DOWN, DEGRADED, SKIPPED, UNKNOWN
+   */
+  String status;
 
-    String detail;
+  String detail;
 }

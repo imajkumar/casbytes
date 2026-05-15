@@ -30,9 +30,7 @@ casbytes:
   jwt:
     secret: test-casbytes-jwt-signing-key-minimum-48-characters-for-unit-tests-01
   auth:
-    bootstrap-admin-enabled: true
-    admin-email: admin@casbytes.com
-    admin-password-encoded: '{noop}Admin@bytes'
+    bootstrap-admin-enabled: false
   security:
     permit-api-without-auth: true
   health:

@@ -1,6 +1,11 @@
 spring:
   datasource:
     url: jdbc:postgresql://localhost:${CASBYTES_COMPOSE_POSTGRES_PORT:5433}/casbytes_core_db?currentSchema=public
+    # Default local Postgres password (matches docker-compose default). Override: SPRING_DATASOURCE_PASSWORD.
+    password: 'System$Admin'
+  flyway:
+    schemas: public
+    default-schema: public
   data:
     redis:
       host: localhost
@@ -17,6 +22,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
+        default_schema: public
 
 logging:
   level:
@@ -24,12 +30,15 @@ logging:
     org.hibernate.SQL: DEBUG
 
 casbytes:
+  # Skip Kafka broker probe unless you run docker compose with Kafka (localhost:9094).
+  health:
+    kafka:
+      enabled: ${CASBYTES_HEALTH_KAFKA_ENABLED:false}
   jwt:
     secret: ${CASBYTES_JWT_SECRET:dev-casbytes-jwt-signing-key-minimum-48-characters-for-local-use-01}
+  # Root admin is seeded in DB (Flyway V3 + startup seeder). Optional YAML bootstrap for emergencies only.
   auth:
-    bootstrap-admin-enabled: true
-    admin-email: admin@casbytes.com
-    admin-password-encoded: '{noop}Admin@bytes'
+    bootstrap-admin-enabled: false
   security:
     permit-api-without-auth: true
 

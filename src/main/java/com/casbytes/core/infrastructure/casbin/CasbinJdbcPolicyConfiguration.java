@@ -17,31 +17,34 @@ import org.springframework.core.io.ResourceLoader;
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
-@ConditionalOnProperty(prefix = "casbytes.casbin", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(
+    prefix = "casbytes.casbin",
+    name = "enabled",
+    havingValue = "true",
+    matchIfMissing = true)
 @ConditionalOnProperty(prefix = "casbytes.casbin", name = "policy-store", havingValue = "jdbc")
 public class CasbinJdbcPolicyConfiguration {
 
-    private final CasbinProperties properties;
-    private final ResourceLoader resourceLoader;
-    private final DataSource dataSource;
+  private final CasbinProperties properties;
+  private final ResourceLoader resourceLoader;
+  private final DataSource dataSource;
 
-    @Bean
-    public Enforcer casbinJdbcEnforcer() throws Exception {
-        Resource modelResource = resourceLoader.getResource(properties.getModelPath());
-        String modelText = new String(modelResource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
-        Model model = new Model();
-        model.loadModelFromText(modelText);
+  @Bean
+  public Enforcer casbinJdbcEnforcer() throws Exception {
+    Resource modelResource = resourceLoader.getResource(properties.getModelPath());
+    String modelText =
+        new String(modelResource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+    Model model = new Model();
+    model.loadModelFromText(modelText);
 
-        JDBCAdapter adapter = new JDBCAdapter(
-                dataSource,
-                false,
-                properties.getJdbcTableName(),
-                properties.isJdbcAutoCreateTable());
-        Enforcer enforcer = new Enforcer(model, adapter);
-        log.info(
-                "Casbin enforcer initialized (store=jdbc, table={}, autoCreateTable={})",
-                properties.getJdbcTableName(),
-                properties.isJdbcAutoCreateTable());
-        return enforcer;
-    }
+    JDBCAdapter adapter =
+        new JDBCAdapter(
+            dataSource, false, properties.getJdbcTableName(), properties.isJdbcAutoCreateTable());
+    Enforcer enforcer = new Enforcer(model, adapter);
+    log.info(
+        "Casbin enforcer initialized (store=jdbc, table={}, autoCreateTable={})",
+        properties.getJdbcTableName(),
+        properties.isJdbcAutoCreateTable());
+    return enforcer;
+  }
 }

@@ -1,4 +1,4 @@
-# Profile used by Testcontainers-backed integration tests (see CasbytesContainersIT).
+# Profile used by Testcontainers-backed integration tests (see integration.security.CasbytesContainersIT).
 spring:
   autoconfigure:
     exclude:

@@ -18,29 +18,40 @@ import org.springframework.core.io.ResourceLoader;
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
-@ConditionalOnProperty(prefix = "casbytes.casbin", name = "enabled", havingValue = "true", matchIfMissing = true)
-@ConditionalOnProperty(prefix = "casbytes.casbin", name = "policy-store", havingValue = "classpath", matchIfMissing = true)
+@ConditionalOnProperty(
+    prefix = "casbytes.casbin",
+    name = "enabled",
+    havingValue = "true",
+    matchIfMissing = true)
+@ConditionalOnProperty(
+    prefix = "casbytes.casbin",
+    name = "policy-store",
+    havingValue = "classpath",
+    matchIfMissing = true)
 public class CasbinClasspathPolicyConfiguration {
 
-    private final CasbinProperties properties;
-    private final ResourceLoader resourceLoader;
+  private final CasbinProperties properties;
+  private final ResourceLoader resourceLoader;
 
-    @Bean
-    public Enforcer casbinClasspathEnforcer() throws IOException {
-        Resource modelResource = resourceLoader.getResource(properties.getModelPath());
-        Resource policyResource = resourceLoader.getResource(properties.getPolicyPath());
+  @Bean
+  public Enforcer casbinClasspathEnforcer() throws IOException {
+    Resource modelResource = resourceLoader.getResource(properties.getModelPath());
+    Resource policyResource = resourceLoader.getResource(properties.getPolicyPath());
 
-        String modelText = new String(modelResource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
-        String policyText = new String(policyResource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+    String modelText =
+        new String(modelResource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+    String policyText =
+        new String(policyResource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
 
-        Model model = new Model();
-        model.loadModelFromText(modelText);
-        FileAdapter adapter = new FileAdapter(new ByteArrayInputStream(policyText.getBytes(StandardCharsets.UTF_8)));
-        Enforcer enforcer = new Enforcer(model, adapter);
-        log.info(
-                "Casbin enforcer initialized (store=classpath, model={}, policy={})",
-                properties.getModelPath(),
-                properties.getPolicyPath());
-        return enforcer;
-    }
+    Model model = new Model();
+    model.loadModelFromText(modelText);
+    FileAdapter adapter =
+        new FileAdapter(new ByteArrayInputStream(policyText.getBytes(StandardCharsets.UTF_8)));
+    Enforcer enforcer = new Enforcer(model, adapter);
+    log.info(
+        "Casbin enforcer initialized (store=classpath, model={}, policy={})",
+        properties.getModelPath(),
+        properties.getPolicyPath());
+    return enforcer;
+  }
 }

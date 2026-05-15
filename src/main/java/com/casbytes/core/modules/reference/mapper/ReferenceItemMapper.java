@@ -9,11 +9,11 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface ReferenceItemMapper {
 
-    ReferenceItemResponse toResponse(ReferenceItem entity);
+  ReferenceItemResponse toResponse(ReferenceItem entity);
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "active", constant = "true")
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
-    ReferenceItem toNewEntity(ReferenceItemCreateRequest request);
+  @Mapping(target = "id", ignore = true)
+  @Mapping(target = "active", constant = "true")
+  @Mapping(target = "createdAt", ignore = true)
+  @Mapping(target = "updatedAt", ignore = true)
+  ReferenceItem toNewEntity(ReferenceItemCreateRequest request);
 }

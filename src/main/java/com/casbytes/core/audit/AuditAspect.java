@@ -12,33 +12,33 @@ import org.springframework.stereotype.Component;
 @Component
 public class AuditAspect {
 
-    @Around("@annotation(auditable)")
-    public Object audit(ProceedingJoinPoint joinPoint, Auditable auditable) throws Throwable {
-        long start = System.nanoTime();
-        try {
-            Object result = joinPoint.proceed();
-            log.info(
-                    "audit.success resource={} action={} method={} correlationId={} durationMs={}",
-                    auditable.resource(),
-                    auditable.action(),
-                    joinPoint.getSignature().toShortString(),
-                    RequestContextUtil.correlationIdOrNew(),
-                    durationMillis(start));
-            return result;
-        } catch (Exception ex) {
-            log.warn(
-                    "audit.failure resource={} action={} method={} correlationId={} durationMs={} message={}",
-                    auditable.resource(),
-                    auditable.action(),
-                    joinPoint.getSignature().toShortString(),
-                    RequestContextUtil.correlationIdOrNew(),
-                    durationMillis(start),
-                    ex.getMessage());
-            throw ex;
-        }
+  @Around("@annotation(auditable)")
+  public Object audit(ProceedingJoinPoint joinPoint, Auditable auditable) throws Throwable {
+    long start = System.nanoTime();
+    try {
+      Object result = joinPoint.proceed();
+      log.info(
+          "audit.success resource={} action={} method={} correlationId={} durationMs={}",
+          auditable.resource(),
+          auditable.action(),
+          joinPoint.getSignature().toShortString(),
+          RequestContextUtil.correlationIdOrNew(),
+          durationMillis(start));
+      return result;
+    } catch (Exception ex) {
+      log.warn(
+          "audit.failure resource={} action={} method={} correlationId={} durationMs={} message={}",
+          auditable.resource(),
+          auditable.action(),
+          joinPoint.getSignature().toShortString(),
+          RequestContextUtil.correlationIdOrNew(),
+          durationMillis(start),
+          ex.getMessage());
+      throw ex;
     }
+  }
 
-    private long durationMillis(long startNanos) {
-        return (System.nanoTime() - startNanos) / 1_000_000L;
-    }
+  private long durationMillis(long startNanos) {
+    return (System.nanoTime() - startNanos) / 1_000_000L;
+  }
 }

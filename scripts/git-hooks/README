@@ -1,0 +1,15 @@
+Install hooks (run from repository root):
+
+  git config core.hooksPath scripts/git-hooks
+
+Pre-commit runs:
+  1) ./mvnw test          (unit tests; integration group excluded by default)
+  2) ./mvnw spotless:check (Google Java Format + import cleanup)
+
+Fix formatting before commit:
+
+  ./mvnw spotless:apply
+
+Bypass (emergency only):
+
+  SKIP_PRE_COMMIT=1 git commit ...

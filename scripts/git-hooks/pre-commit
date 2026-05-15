@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# Pre-commit: unit tests → Spotless check. Blocks commit on failure.
+#
+# Install (once per clone):
+#   git config core.hooksPath scripts/git-hooks
+#
+# Emergency bypass (use sparingly):
+#   SKIP_PRE_COMMIT=1 git commit ...
+set -euo pipefail
+
+if [[ "${SKIP_PRE_COMMIT:-}" == "1" ]]; then
+  echo "SKIP_PRE_COMMIT=1: skipping pre-commit (unit tests + spotless:check)."
+  exit 0
+fi
+
+ROOT="$(git rev-parse --show-toplevel 2>/dev/null)" || {
+  echo "pre-commit: not inside a git repository; skipping." >&2
+  exit 0
+}
+cd "$ROOT"
+
+if [[ ! -f "./mvnw" ]]; then
+  echo "pre-commit: ./mvnw not found at $ROOT" >&2
+  exit 1
+fi
+chmod +x ./mvnw 2>/dev/null || true
+
+echo "pre-commit: running unit tests..."
+./mvnw -q test
+
+echo "pre-commit: running Spotless (format check)..."
+./mvnw -q spotless:check
+
+echo "pre-commit: OK."

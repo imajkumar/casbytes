@@ -12,6 +12,6 @@ import lombok.extern.jackson.Jacksonized;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class HealthReportDto {
 
-    String status;
-    Map<String, HealthStatusDto> checks;
+  String status;
+  Map<String, HealthStatusDto> checks;
 }

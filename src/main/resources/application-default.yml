@@ -1,0 +1,18 @@
+# Implicit "default" profile (no spring.profiles.active). Matches docker-compose host ports.
+# Password literal matches compose default; override with SPRING_DATASOURCE_PASSWORD (or CASBYTES_DATASOURCE_PASSWORD via application.yml only if you remove this key — prefer SPRING_* in IDE).
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:${CASBYTES_COMPOSE_POSTGRES_PORT:5433}/casbytes_core_db?currentSchema=public
+    password: 'System$Admin'
+  data:
+    redis:
+      port: ${CASBYTES_COMPOSE_REDIS_PORT:6380}
+  flyway:
+    schemas: public
+    default-schema: public
+
+# Same HS256 secret default as application-dev.yml so /api/v1/auth/login can mint tokens (JwtEncoder bean).
+# Override with env CASBYTES_JWT_SECRET; avoid setting it to blank in the IDE.
+casbytes:
+  jwt:
+    secret: dev-casbytes-jwt-signing-key-minimum-48-characters-for-local-use-01

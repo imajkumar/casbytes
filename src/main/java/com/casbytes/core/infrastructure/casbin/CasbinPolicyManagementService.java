@@ -10,13 +10,13 @@ import org.springframework.stereotype.Service;
 @ConditionalOnBean(Enforcer.class)
 public class CasbinPolicyManagementService {
 
-    private final Enforcer enforcer;
+  private final Enforcer enforcer;
 
-    /**
-     * Reloads policies from the active {@link org.casbin.jcasbin.persist.Adapter} (classpath file or JDBC).
-     */
-    public void reloadPolicies() {
-        enforcer.clearPolicy();
-        enforcer.loadPolicy();
-    }
+  /**
+   * Reloads policies from the active {@link org.casbin.jcasbin.persist.Adapter} (classpath file or JDBC).
+   */
+  public void reloadPolicies() {
+    enforcer.clearPolicy();
+    enforcer.loadPolicy();
+  }
 }
